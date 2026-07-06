@@ -1,10 +1,12 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.buildkonfig) // buildConfig的KMP跨平台替代
 }
 
 kotlin {
@@ -17,7 +19,8 @@ kotlin {
             isStatic = true
         }
     }
-    
+
+
     androidLibrary {
        namespace = "com.rubp.whattoeat.shared"
        compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -47,10 +50,13 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
-            implementation(libs.compose.icons.material.filled)
-            implementation(libs.compose.icons.material.outlined)
-            implementation(libs.coil.compose)
-            implementation(libs.coil.network)
+            implementation(libs.compose.icons.material.filled)   // composable icons库
+            implementation(libs.compose.icons.material.outlined) // composable icons库
+            implementation(libs.coil.compose) // coil库，更好的图片支持
+            implementation(libs.coil.network) // coil库，网络图片支持
+            implementation(libs.multiplatform.settings)            // 持久化数据
+            implementation(libs.multiplatform.settings.no.arg)     // 持久化数据
+            implementation(libs.multiplatform.settings.coroutines) // 持久化数据
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -60,4 +66,11 @@ kotlin {
 
 dependencies {
     androidRuntimeClasspath(libs.compose.uiTooling)
+}
+
+buildkonfig {
+    packageName = "com.rubp.whattoeat"
+    defaultConfigs {
+        buildConfigField(STRING, "VERSION_NAME", "0.1.0")
+    }
 }
