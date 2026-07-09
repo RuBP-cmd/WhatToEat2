@@ -22,6 +22,9 @@ kotlin {
         }
     }
 
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
 
     androidLibrary {
        namespace = "com.rubp.whattoeat.shared"
@@ -42,6 +45,7 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
+            implementation(libs.androidx.activity.compose)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)

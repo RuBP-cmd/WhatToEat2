@@ -7,7 +7,7 @@ import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.Settings
 import com.russhwolf.settings.coroutines.getStringFlow
 
-class ConfigRepository() {
+object ConfigRepository {
     private val settings: Settings = Settings()
     private val observableSettings = settings as ObservableSettings
 

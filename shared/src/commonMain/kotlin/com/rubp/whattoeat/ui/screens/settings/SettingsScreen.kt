@@ -34,7 +34,6 @@ import com.rubp.whattoeat.ui.components.TitleCard
 import com.rubp.whattoeat.ui.theme.ColorTheme
 import com.rubp.whattoeat.ui.viewmodel.SettingsViewModel
 import com.rubp.whattoeat.BuildKonfig
-import com.rubp.whattoeat.data.repository.ConfigRepository
 import com.rubp.whattoeat.ui.icons.GitHubIcon
 
 
@@ -44,7 +43,7 @@ fun SettingsScreen(){
     val settingsViewModel: SettingsViewModel = viewModel(
         factory = viewModelFactory {
             initializer {
-                SettingsViewModel(ConfigRepository())
+                SettingsViewModel()
             }
         }
     )

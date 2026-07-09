@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.stateIn
 import com.rubp.whattoeat.ui.theme.ColorTheme
 
 class SettingsViewModel(
-    private val repository: ConfigRepository
+    private val repository: ConfigRepository = ConfigRepository
 ): ViewModel() {
 
     val colorTheme: StateFlow<ColorTheme> = repository.colorThemeFlow.stateIn(
