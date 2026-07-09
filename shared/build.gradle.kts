@@ -7,6 +7,8 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.buildkonfig) // buildConfig的KMP跨平台替代
+    alias(libs.plugins.ksp)             // 数据库
+    alias(libs.plugins.androidx.room)   // 数据库
 }
 
 kotlin {
@@ -57,6 +59,8 @@ kotlin {
             implementation(libs.multiplatform.settings)            // 持久化数据
             implementation(libs.multiplatform.settings.no.arg)     // 持久化数据
             implementation(libs.multiplatform.settings.coroutines) // 持久化数据
+            implementation(libs.androidx.room.runtime)      // 数据库
+            implementation(libs.androidx.sqlite.bundled)    // 数据库
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -73,4 +77,8 @@ buildkonfig {
     defaultConfigs {
         buildConfigField(STRING, "VERSION_NAME", "0.1.0")
     }
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }

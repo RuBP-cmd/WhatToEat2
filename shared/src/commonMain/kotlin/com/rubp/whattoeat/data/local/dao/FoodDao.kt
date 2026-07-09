@@ -1,0 +1,33 @@
+package com.rubp.whattoeat.data.local.dao
+
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
+import com.rubp.whattoeat.data.local.entry.Food
+
+@Dao
+interface FoodDao {
+    @Query("SELECT * FROM food WHERE table_id = :tableId ORDER BY created_at ASC")
+    fun getByTableId(tableId: Int): Flow<List<Food>>
+
+    @Query("SELECT * FROM food ORDER BY created_at ASC")
+    fun getAll(): Flow<List<Food>>
+
+    @Update
+    suspend fun update(food: Food)
+
+    @Insert
+    suspend fun insert(food: Food)
+
+    @Delete
+    suspend fun delete(food: Food)
+
+    @Query("DELETE FROM food WHERE table_id = :tableId")
+    suspend fun deleteByTableId(tableId: Int)
+
+    @Query("UPDATE food SET marked = :marked WHERE table_id = :tableId")
+    suspend fun updateAllMarked(tableId: Int, marked: Boolean)
+}
