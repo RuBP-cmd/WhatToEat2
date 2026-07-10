@@ -25,6 +25,7 @@ import com.composables.icons.materialicons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -116,7 +117,9 @@ fun FoodEditContent(
     var foodPendingDelete by remember { mutableStateOf<Food?>(null) }
 
     Scaffold(
-        topBar = { AppTopBar(onReturnToEat, "编辑清单") }
+        topBar = {
+            AppTopBar(onReturnToEat, "编辑清单")
+        }
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -132,12 +135,13 @@ fun FoodEditContent(
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ){
                 // 标题
-                RenameableTitle(
+                CardText(
                     modifier = Modifier
                         .padding(horizontal = 35.dp)
                         .height(70.dp),
-                    tableName = tableName,
-                    onRenaming = { name -> onRenameTable(currentTableId, name) } // 重命名
+                    text = tableName,
+                    style = MaterialTheme.typography.titleLarge,
+                    textColor = MaterialTheme.colorScheme.primary
                 )
 
                 // 滚动标题栏（切换表格）
@@ -161,7 +165,6 @@ fun FoodEditContent(
                     onInputName = onInputName,
                     onInputWeight = onInputWeight,
                     onClickDelFood = { foodPendingDelete = it; showDeleteFoodDialog = true },
-                    onDelete = { showDeleteTableDialog = true } // 拉出删除对话框
                 )
 
                 Spacer(Modifier.height(25.dp))
@@ -252,49 +255,7 @@ fun FoodEditContent(
     }
 }
 
-@Composable
-private fun RenameableTitle(
-    modifier: Modifier,
-    tableName: String,
-    onRenaming: (String) -> Unit,
-){
-    var isRenaming by remember { mutableStateOf(false) }
 
-    if(!isRenaming){
-        CardText(
-            modifier = modifier
-                .combinedClickable(
-                    onDoubleClick = { isRenaming = true },
-                    onClick = {}
-                ),
-            text = tableName,
-            style = MaterialTheme.typography.titleLarge,
-            textColor = MaterialTheme.colorScheme.primary
-        )
-    } else {
-        Row(
-            modifier = modifier,
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ){
-            CardTextFiled(
-                modifier = Modifier.weight(1f).fillMaxHeight(),
-                text = tableName,
-                onValueChange = onRenaming,
-            )
-            PrimaryButton(
-                modifier = Modifier
-                    .width(IntrinsicSize.Min)
-                    .height(IntrinsicSize.Min),
-                text = "确定"
-            ) {
-                isRenaming = false
-            }
-        }
-
-
-    }
-}
 @Composable
 private fun ScrollableTableTitleRow(
     modifier: Modifier,
@@ -350,7 +311,6 @@ private fun EditTable(
     onInputName: (food: Food, name: String) -> Unit,
     onInputWeight: (food: Food, weight: Int) -> Unit,
     onClickDelFood: (food: Food) -> Unit,
-    onDelete: () -> Unit
 ) {
     val weightList = listOf(2f, 8f, 3f)
     val titleColor = MaterialTheme.colorScheme.primary
@@ -368,11 +328,7 @@ private fun EditTable(
                     .fillMaxWidth()
                     .height(36.dp)
                     .background(MaterialTheme.colorScheme.surface)
-                    .padding(horizontal = 5.dp)
-                    .combinedClickable(
-                        onLongClick = onDelete,
-                        onClick = {}
-                    ),
+                    .padding(horizontal = 5.dp),
                 cells = listOf(
                     Cell({ Text(text = "参选", color = titleColor, style = titleStyle) }, weightList[0]),
                     Cell({ Text(text = "名称", color = titleColor, style = titleStyle) }, weightList[1]),
@@ -527,8 +483,8 @@ private fun FoodEditContentPreview() {
     FoodEditContent(
         foodList = emptyList(),
         tables = listOf(
-            FoodTable(1L, "默认", 0),
-            FoodTable(2L, "午餐", 1)
+            FoodTable(1L, "早餐", 0L),
+            FoodTable(2L, "午餐", 1L)
         ),
         currentTableId = 1L,
         onReturnToEat = {},

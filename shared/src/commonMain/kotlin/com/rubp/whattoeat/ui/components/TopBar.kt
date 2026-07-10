@@ -2,26 +2,33 @@ package com.rubp.whattoeat.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import com.composables.icons.materialicons.MaterialIcons
-import com.composables.icons.materialicons.filled.Chevron_left
-import com.composables.icons.materialicons.filled.More_vert
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.composables.icons.materialicons.MaterialIcons
+import com.composables.icons.materialicons.filled.Chevron_left
+import com.composables.icons.materialicons.filled.More_vert
 
 
 @Composable
 fun AppTopBar(
     onClickReturn: (() -> Unit),
     title: String? = null,
-    onClickMore: (() -> Unit)? = null
+    menu: (@Composable ColumnScope.() -> Unit)? = null
 ){
     val componentColor = MaterialTheme.colorScheme.onPrimary
     Row(
@@ -46,21 +53,29 @@ fun AppTopBar(
         }
 
 
-        if(onClickMore == null) {
+        if(menu == null) {
             IconButton( // 仅作为占位
                 onClick = {},
                 enabled = false
             ) {}
         } else {
-            IconButton(onClickMore){
-                Icon(
-                    imageVector = MaterialIcons.Filled.More_vert,
-                    contentDescription = "更多",
-                    tint = componentColor
+            var isShowMenu by remember { mutableStateOf(false) }
+            Box{
+                IconButton({ isShowMenu = true }){
+                    Icon(
+                        imageVector = MaterialIcons.Filled.More_vert,
+                        contentDescription = "更多",
+                        tint = componentColor
+                    )
+                }
+                // 锚点父容器Box，而父容器Box完全取决于IconButton“更多”，这就实现了跟在“更多”下方
+                DropdownMenu(
+                    expanded = isShowMenu,
+                    onDismissRequest = { isShowMenu = false }, // 点击菜单外的任何地方，消耗点击事件
+                    content = menu
                 )
             }
         }
-
     }
 }
 

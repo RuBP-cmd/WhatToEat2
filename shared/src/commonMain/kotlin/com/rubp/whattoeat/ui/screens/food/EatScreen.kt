@@ -76,7 +76,7 @@ private fun EatContent(
     onClickClearIgnore: () -> Unit
 ) {
     Scaffold(
-        topBar = { AppTopBar(onReturnToHome, "Eat", onNavigateToFoodEdit) }
+        topBar = { AppTopBar(onReturnToHome, "Eat") }
     ) { paddingValues ->
 
         Box(
