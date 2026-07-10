@@ -2,30 +2,22 @@ package com.rubp.whattoeat.ui.screens.food
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import com.composables.icons.materialicons.MaterialIcons
-import com.composables.icons.materialicons.filled.Add
-import com.composables.icons.materialicons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -50,15 +42,18 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.composables.icons.materialicons.MaterialIcons
+import com.composables.icons.materialicons.filled.Add
+import com.composables.icons.materialicons.filled.Delete
 import com.rubp.whattoeat.data.local.entry.Food
 import com.rubp.whattoeat.data.local.entry.FoodTable
 import com.rubp.whattoeat.model.Cell
 import com.rubp.whattoeat.ui.components.AppTopBar
 import com.rubp.whattoeat.ui.components.CardText
-import com.rubp.whattoeat.ui.components.CardTextFiled
 import com.rubp.whattoeat.ui.components.CircleIconButton
 import com.rubp.whattoeat.ui.components.ConfirmDialog
 import com.rubp.whattoeat.ui.components.LeftSwipeBox
+import com.rubp.whattoeat.ui.components.MenuButton
 import com.rubp.whattoeat.ui.components.PrimaryButton
 import com.rubp.whattoeat.ui.components.RowItem
 import com.rubp.whattoeat.ui.viewmodel.FoodViewModel
@@ -118,7 +113,12 @@ fun FoodEditContent(
 
     Scaffold(
         topBar = {
-            AppTopBar(onReturnToEat, "编辑清单")
+            AppTopBar(onReturnToEat, "编辑清单"){
+                MenuButton("重命名表格"){}
+                MenuButton("删除表格"){}
+                MenuButton("导入表格"){}
+                MenuButton("导出表格"){}
+            }
         }
     ) { paddingValues ->
         Box(

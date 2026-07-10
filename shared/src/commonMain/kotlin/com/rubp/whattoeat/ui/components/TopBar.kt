@@ -3,9 +3,11 @@ package com.rubp.whattoeat.ui.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.composables.icons.materialicons.MaterialIcons
 import com.composables.icons.materialicons.filled.Chevron_left
 import com.composables.icons.materialicons.filled.More_vert
@@ -72,7 +75,9 @@ fun AppTopBar(
                 DropdownMenu(
                     expanded = isShowMenu,
                     onDismissRequest = { isShowMenu = false }, // 点击菜单外的任何地方，消耗点击事件
-                    content = menu
+                    content = {
+                        Column{ menu() }
+                    }
                 )
             }
         }
