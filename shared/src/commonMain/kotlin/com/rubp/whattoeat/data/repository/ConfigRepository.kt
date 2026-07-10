@@ -5,6 +5,7 @@ import com.rubp.whattoeat.ui.theme.ColorTheme
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ObservableSettings
 import com.russhwolf.settings.Settings
+import com.russhwolf.settings.coroutines.getIntFlow
 import com.russhwolf.settings.coroutines.getStringFlow
 
 object ConfigRepository {
@@ -21,7 +22,8 @@ object ConfigRepository {
         .getStringFlow(Keys.COLOR_THEME, ColorTheme.Pink.name)
         .map { ColorTheme.valueOf(it) }
 
-    val savedTableID = settings.getInt(Keys.SAVED_TABLE_ID, 1)
+    @OptIn(ExperimentalSettingsApi::class)
+    val savedTableIdFlow = observableSettings.getIntFlow(Keys.SAVED_TABLE_ID, 1)
 
     fun saveColorTheme(theme: ColorTheme) {
         settings.putString(Keys.COLOR_THEME, theme.name)
