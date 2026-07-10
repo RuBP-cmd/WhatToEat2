@@ -9,7 +9,6 @@ import com.rubp.whattoeat.data.repository.ConfigRepository
 import com.rubp.whattoeat.ui.screens.MainScreen
 import com.rubp.whattoeat.ui.theme.ColorTheme
 import com.rubp.whattoeat.ui.theme.WhatToEatTheme
-import com.rubp.whattoeat.ui.screens.settings.SettingsScreen
 
 @Composable
 @Preview
