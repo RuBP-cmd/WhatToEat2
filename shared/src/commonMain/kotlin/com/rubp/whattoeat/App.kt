@@ -6,6 +6,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.rubp.whattoeat.data.repository.ConfigRepository
+import com.rubp.whattoeat.ui.screens.MainScreen
 import com.rubp.whattoeat.ui.theme.ColorTheme
 import com.rubp.whattoeat.ui.theme.WhatToEatTheme
 import com.rubp.whattoeat.ui.screens.settings.SettingsScreen
@@ -15,6 +16,6 @@ import com.rubp.whattoeat.ui.screens.settings.SettingsScreen
 fun App() {
     val colorTheme by ConfigRepository.colorThemeFlow.collectAsState(initial = ColorTheme.Pink)
     WhatToEatTheme(colorTheme = colorTheme, darkTheme = isSystemInDarkTheme()) {
-        SettingsScreen()
+        MainScreen()
     }
 }

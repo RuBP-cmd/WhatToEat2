@@ -3,14 +3,6 @@ package com.rubp.whattoeat.data.local.database
 import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.RoomDatabaseConstructor
-
-actual object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
-    actual override fun initialize(): AppDatabase {
-        val ctx = AppDatabaseContext.context
-        return getDatabase(getDatabaseBuilder(ctx))
-    }
-}
 
 @Suppress("StaticFieldLeak")
 object AppDatabaseContext {

@@ -22,10 +22,23 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun foodTableDao(): FoodTableDao
 
     companion object {
-        val database: AppDatabase =  AppDatabaseConstructor.initialize()
+        private var _database: AppDatabase? = null
+
+        val database: AppDatabase
+            get() = _database ?: throw IllegalStateException(
+                "数据库未成功初始化"
+            )
+
+        fun init(builder: RoomDatabase.Builder<AppDatabase>) {
+            if (_database == null) {
+                _database = getDatabase(builder)
+            }
+        }
     }
 }
 
+// 必须自动生成，不需手写actual
+@Suppress("KotlinNoActualForExpect")
 expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
     override fun initialize(): AppDatabase
 }

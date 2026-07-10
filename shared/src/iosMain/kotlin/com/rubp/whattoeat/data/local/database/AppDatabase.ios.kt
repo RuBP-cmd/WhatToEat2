@@ -2,17 +2,10 @@ package com.rubp.whattoeat.data.local.database
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.RoomDatabaseConstructor
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
-
-actual object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
-    actual override fun initialize(): AppDatabase {
-        return getDatabase(getDatabaseBuilder())
-    }
-}
 
 fun getDatabaseBuilder(): RoomDatabase.Builder<AppDatabase> {
     val dbFilePath = documentDirectory() + "/room.db"
