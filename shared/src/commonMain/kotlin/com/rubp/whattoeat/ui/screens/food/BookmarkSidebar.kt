@@ -16,7 +16,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -33,11 +33,11 @@ import kotlin.collections.forEach
 @Composable
 fun BookmarkSidebar(
     tables: List<FoodTable>,
-    currentTableId: Int,
-    onTableSelected: (Int) -> Unit,
+    currentTableId: Long,
+    onTableSelected: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var expandedTableId by remember { mutableIntStateOf(-1) }
+    var expandedTableId by remember { mutableStateOf(-1L) }
 
     Column(
         modifier = modifier
@@ -53,7 +53,7 @@ fun BookmarkSidebar(
                 isExpanded = table.id == expandedTableId,
                 onClick = {
                     expandedTableId = if (expandedTableId == table.id) {
-                        -1 // 已展开，再次点击：切换到此表
+                        -1L // 已展开，再次点击：切换到此表
                     } else {
                         table.id // 未展开：展开显示完整表名
                     }

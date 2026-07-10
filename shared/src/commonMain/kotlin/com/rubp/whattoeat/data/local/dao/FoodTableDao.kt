@@ -23,5 +23,5 @@ interface FoodTableDao {
     suspend fun delete(table: FoodTable)
 
     @Query("DELETE FROM food_table WHERE id = :tableId")
-    suspend fun deleteById(tableId: Int)
+    suspend fun deleteById(tableId: Long)
 }

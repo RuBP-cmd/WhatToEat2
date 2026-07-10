@@ -28,10 +28,10 @@ class FoodViewModel(
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     // 当前选中的表格 id，将Flow转为StateFlow
-    val currentTableId: StateFlow<Int> = configRepository.savedTableIdFlow.stateIn(
+    val currentTableId: StateFlow<Long> = configRepository.savedTableIdFlow.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
-        initialValue = 1
+        initialValue = 1L
     )
 
     // 随着tableId的变化而变化的：
@@ -53,7 +53,7 @@ class FoodViewModel(
 
     // --- 表格管理 ---
 
-    fun switchTable(tableId: Int) {
+    fun switchTable(tableId: Long) {
         if (tableId == currentTableId.value) return
         updateCurrentTableId(tableId)
         chosenFood = null
@@ -61,7 +61,7 @@ class FoodViewModel(
 
     fun createTable(name: String) {
         viewModelScope.launch {
-            val newTableId = foodTableRepository.insert(FoodTable(name = name)).toInt()
+            val newTableId = foodTableRepository.insert(FoodTable(name = name))
             repeat(3) {
                 foodRepository.insert(
                     Food(
@@ -75,7 +75,7 @@ class FoodViewModel(
         }
     }
 
-    fun renameTable(tableId: Int, newName: String) {
+    fun renameTable(tableId: Long, newName: String) {
         viewModelScope.launch {
             val target = tables.value.find { it.id == tableId } ?: return@launch
             foodTableRepository.update(target.copy(name = newName))
@@ -83,7 +83,7 @@ class FoodViewModel(
     }
 
     // 删除表，注意删除的表是正在使用的表的情况，需要将表id切换到剩余的表
-    fun deleteTable(tableId: Int) {
+    fun deleteTable(tableId: Long) {
         viewModelScope.launch {
             foodRepository.deleteByTableId(tableId)
             foodTableRepository.deleteById(tableId)
@@ -139,7 +139,7 @@ class FoodViewModel(
             foodRepository.updateAllMarked(currentTableId.value, marked = true)
         }
     }
-    fun updateCurrentTableId(currentTableId: Int){
+    fun updateCurrentTableId(currentTableId: Long){
         configRepository.saveTableId(currentTableId)
     }
 }

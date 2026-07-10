@@ -7,7 +7,7 @@ import kotlin.time.Clock
 
 @Entity("food_table")
 data class FoodTable(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0L,
     val name: String,
     @ColumnInfo(name = "created_at") val createdAt: Long = Clock.System.now().toEpochMilliseconds()
 )

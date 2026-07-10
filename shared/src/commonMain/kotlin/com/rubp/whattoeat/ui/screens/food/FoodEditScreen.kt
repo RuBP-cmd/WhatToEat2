@@ -96,11 +96,11 @@ fun FoodEditScreen(
 fun FoodEditContent(
     foodList: List<Food>,
     tables: List<FoodTable>,
-    currentTableId: Int,
+    currentTableId: Long,
     onReturnToEat: () -> Unit,
-    onTableSelected: (Int) -> Unit,
-    onRenameTable: (Int, String) -> Unit,
-    onDeleteTable: (Int) -> Unit,
+    onTableSelected: (Long) -> Unit,
+    onRenameTable: (Long, String) -> Unit,
+    onDeleteTable: (Long) -> Unit,
     onCreateTable: (String) -> Unit,
     onAddFood: () -> Unit,
     onDelFood: (food: Food) -> Unit,
@@ -298,9 +298,9 @@ private fun RenameableTitle(
 @Composable
 private fun ScrollableTableTitleRow(
     modifier: Modifier,
-    currentTableId: Int, // 更新的根源
+    currentTableId: Long, // 更新的根源
     tables: List<FoodTable>,
-    onTableSelected: (Int) -> Unit,
+    onTableSelected: (Long) -> Unit,
     onAddTable: () -> Unit,
 ){
     val selectedIndex = remember(currentTableId, tables) {
@@ -527,10 +527,10 @@ private fun FoodEditContentPreview() {
     FoodEditContent(
         foodList = emptyList(),
         tables = listOf(
-            FoodTable(1, "默认", 0),
-            FoodTable(2, "午餐", 1)
+            FoodTable(1L, "默认", 0),
+            FoodTable(2L, "午餐", 1)
         ),
-        currentTableId = 1,
+        currentTableId = 1L,
         onReturnToEat = {},
         onTableSelected = {},
         onRenameTable = { _, _ -> },

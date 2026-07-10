@@ -7,10 +7,10 @@ import kotlin.time.Clock
 
 @Entity("food")
 data class Food(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0, // = 0表示未分配，autoGenerate会自动分配唯一id
+    @PrimaryKey(autoGenerate = true) val id: Long = 0L, // = 0表示未分配，autoGenerate会自动分配唯一id
     @ColumnInfo(name = "created_at") val timeStamp: Long = Clock.System.now().toEpochMilliseconds(),
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "weight") val weight: Int,
     @ColumnInfo(name = "marked") val marked: Boolean,
-    @ColumnInfo(name = "table_id") val tableId: Int = 1
+    @ColumnInfo(name = "table_id") val tableId: Long = 1L
 )

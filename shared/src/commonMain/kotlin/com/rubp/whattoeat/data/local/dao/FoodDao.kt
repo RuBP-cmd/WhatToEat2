@@ -11,7 +11,7 @@ import com.rubp.whattoeat.data.local.entry.Food
 @Dao
 interface FoodDao {
     @Query("SELECT * FROM food WHERE table_id = :tableId ORDER BY created_at ASC")
-    fun getByTableId(tableId: Int): Flow<List<Food>>
+    fun getByTableId(tableId: Long): Flow<List<Food>>
 
     @Query("SELECT * FROM food ORDER BY created_at ASC")
     fun getAll(): Flow<List<Food>>
@@ -26,8 +26,8 @@ interface FoodDao {
     suspend fun delete(food: Food)
 
     @Query("DELETE FROM food WHERE table_id = :tableId")
-    suspend fun deleteByTableId(tableId: Int)
+    suspend fun deleteByTableId(tableId: Long)
 
     @Query("UPDATE food SET marked = :marked WHERE table_id = :tableId")
-    suspend fun updateAllMarked(tableId: Int, marked: Boolean)
+    suspend fun updateAllMarked(tableId: Long, marked: Boolean)
 }

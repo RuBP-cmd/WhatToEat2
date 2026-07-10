@@ -16,5 +16,5 @@ class FoodTableRepository(
 
     suspend fun delete(table: FoodTable) = dao.delete(table)
 
-    suspend fun deleteById(tableId: Int) = dao.deleteById(tableId)
+    suspend fun deleteById(tableId: Long) = dao.deleteById(tableId)
 }

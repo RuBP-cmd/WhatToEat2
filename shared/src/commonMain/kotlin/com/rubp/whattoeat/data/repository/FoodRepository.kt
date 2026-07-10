@@ -8,7 +8,7 @@ import com.rubp.whattoeat.data.local.entry.Food
 class FoodRepository(
     private val dao: FoodDao = AppDatabase.database.foodDao()
 ) {
-    fun getByTableId(tableId: Int): Flow<List<Food>> = dao.getByTableId(tableId)
+    fun getByTableId(tableId: Long): Flow<List<Food>> = dao.getByTableId(tableId)
 
     fun getAll(): Flow<List<Food>> = dao.getAll()
 
@@ -18,7 +18,7 @@ class FoodRepository(
 
     suspend fun delete(food: Food) = dao.delete(food)
 
-    suspend fun deleteByTableId(tableId: Int) = dao.deleteByTableId(tableId)
+    suspend fun deleteByTableId(tableId: Long) = dao.deleteByTableId(tableId)
 
-    suspend fun updateAllMarked(tableId: Int, marked: Boolean) = dao.updateAllMarked(tableId, marked)
+    suspend fun updateAllMarked(tableId: Long, marked: Boolean) = dao.updateAllMarked(tableId, marked)
 }

@@ -66,10 +66,10 @@ fun EatScreen(
 private fun EatContent(
     foodName: String,
     tables: List<FoodTable>,
-    currentTableId: Int,
+    currentTableId: Long,
     onNavigateToFoodEdit: () -> Unit,
     onReturnToHome: () -> Unit,
-    onTableSelected: (Int) -> Unit,
+    onTableSelected: (Long) -> Unit,
     onClickRandomFood: () -> Unit,
     onClickClear: () -> Unit,
     onClickIgnore: () -> Unit,
@@ -194,11 +194,11 @@ private fun EatContentPreview() {
     EatContent(
         foodName = "显示一个食物名称",
         tables = listOf(
-            FoodTable(1, "默认", 0),
-            FoodTable(2, "午餐", 1),
-            FoodTable(3, "晚餐", 2)
+            FoodTable(1L, "默认", 0),
+            FoodTable(2L, "午餐", 1),
+            FoodTable(3L, "晚餐", 2)
         ),
-        currentTableId = 1,
+        currentTableId = 1L,
         onNavigateToFoodEdit = {},
         onReturnToHome = {},
         onTableSelected = {},
