@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.buildkonfig) // buildConfig的KMP跨平台替代
     alias(libs.plugins.ksp)             // 数据库
     alias(libs.plugins.androidx.room)   // 数据库
+    alias(libs.plugins.kotlinSerialization)   // 序列化（导航需要）
 }
 
 kotlin {
@@ -65,6 +66,8 @@ kotlin {
             implementation(libs.multiplatform.settings.coroutines) // 持久化数据
             implementation(libs.androidx.room.runtime)      // 数据库
             implementation(libs.androidx.sqlite.bundled)    // 数据库
+            implementation(libs.kotlinx.serialization.json)   // 导航类型安全路由依赖
+            implementation(libs.androidx.navigation.compose)   // 导航
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
