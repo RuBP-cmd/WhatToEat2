@@ -20,6 +20,10 @@ import kotlinx.coroutines.IO
 abstract class AppDatabase : RoomDatabase() {
     abstract fun foodDao(): FoodDao
     abstract fun foodTableDao(): FoodTableDao
+
+    companion object {
+        val database: AppDatabase =  AppDatabaseConstructor.initialize()
+    }
 }
 
 expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
