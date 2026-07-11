@@ -33,7 +33,7 @@ import kotlin.collections.forEach
 @Composable
 fun BookmarkSidebar(
     tables: List<FoodTable>,
-    currentTableId: Long,
+    currentTable: FoodTable?,
     onTableSelected: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -49,7 +49,7 @@ fun BookmarkSidebar(
         tables.forEach { table ->
             BookmarkItem(
                 name = table.name,
-                isActive = table.id == currentTableId,
+                isActive = table.id == currentTable?.id,
                 isExpanded = table.id == expandedTableId,
                 onClick = {
                     expandedTableId = if (expandedTableId == table.id) {

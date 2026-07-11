@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -27,17 +28,17 @@ class FoodViewModel(
     val tables: StateFlow<List<FoodTable>> = foodTableRepository.getAll()
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    // 当前选中的表格 id，将Flow转为StateFlow
-    val currentTableId: StateFlow<Long> = configRepository.savedTableIdFlow.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.Eagerly,
-        initialValue = 1L
-    )
+
+    // 当前表格对象，跟随 ConfigRepository中的savedIdFlow 变化自动更新
+    val currentTable: StateFlow<FoodTable?> = ConfigRepository.savedTableIdFlow.flatMapLatest { tableId ->
+        foodTableRepository.getById(tableId)
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     // 随着tableId的变化而变化的：
     // 当前表格中的食物，切换表格时自动更新
-    val foods: StateFlow<List<Food>> = currentTableId.flatMapLatest { tableId ->
-        foodRepository.getByTableId(tableId)
+    val foods: StateFlow<List<Food>> = currentTable.flatMapLatest { table ->
+        if(table != null) foodRepository.getByTableId(table.id)
+        else flowOf(emptyList<Food>())
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     var chosenFood: Food? = null
@@ -53,9 +54,9 @@ class FoodViewModel(
 
     // --- 表格管理 ---
 
-    fun switchTable(tableId: Long) {
-        if (tableId == currentTableId.value) return
-        updateCurrentTableId(tableId)
+    fun switchTable(id: Long) {
+        if (id == currentTable.value?.id) return
+        saveCurrentTableId(id)
         chosenFood = null
     }
 
@@ -64,36 +65,33 @@ class FoodViewModel(
             val newTableId = foodTableRepository.insert(FoodTable(name = name))
             repeat(3) {
                 foodRepository.insert(
-                    Food(
-                        name = "",
-                        weight = 1,
-                        marked = true,
-                        tableId = newTableId
-                    )
+                    Food(name = "", weight = 1, marked = true, tableId = newTableId)
                 )
             }
         }
     }
 
-    fun renameTable(tableId: Long, newName: String) {
+    fun renameTable(id: Long, newName: String) {
         viewModelScope.launch {
-            val target = tables.value.find { it.id == tableId } ?: return@launch
+            val target = tables.value.find { it.id == id } ?: return@launch
             foodTableRepository.update(target.copy(name = newName))
         }
     }
 
     // 删除表，注意删除的表是正在使用的表的情况，需要将表id切换到剩余的表
-    fun deleteTable(tableId: Long) {
+    // 如果没有表格，需要创建一个默认表格
+    fun deleteTable(id: Long) {
         viewModelScope.launch {
-            foodRepository.deleteByTableId(tableId)
-            foodTableRepository.deleteById(tableId)
-            if (currentTableId.value == tableId) {
+            if (currentTable.value?.id == id) {
                 // 切换到剩余的表中
-                val remaining = tables.value.filter { it.id != tableId }
+                val remaining = tables.value.filter { it.id != id }
                 if (remaining.isNotEmpty()) {
-                    updateCurrentTableId(remaining.first().id)
+                    saveCurrentTableId(remaining.first().id)
                 }
             }
+            foodRepository.deleteByTableId(id)
+            foodTableRepository.deleteById(id)
+
         }
     }
 
@@ -101,7 +99,10 @@ class FoodViewModel(
 
     fun insert(food: Food) {
         viewModelScope.launch { // ui层不管之table_id，因此移到这里添加
-            foodRepository.insert(food.copy(tableId = currentTableId.value))
+            currentTable.value?.let { table ->
+                foodRepository.insert(food.copy(tableId = table.id))
+            }
+
         }
     }
 
@@ -136,10 +137,13 @@ class FoodViewModel(
 
     fun clearAllIgnore() {
         viewModelScope.launch {
-            foodRepository.updateAllMarked(currentTableId.value, marked = true)
+            currentTable.value?.let { table ->
+                foodRepository.updateAllMarked(table.id, marked = true)
+            }
+
         }
     }
-    fun updateCurrentTableId(currentTableId: Long){
-        configRepository.saveTableId(currentTableId)
+    private fun saveCurrentTableId(id: Long){
+        configRepository.saveTableId(id)
     }
 }

@@ -10,6 +10,9 @@ import com.rubp.whattoeat.data.local.entry.FoodTable
 
 @Dao
 interface FoodTableDao {
+    @Query("SELECT * FROM food_table WHERE id = :id")
+    fun getById(id: Long): Flow<FoodTable?>
+
     @Query("SELECT * FROM food_table ORDER BY created_at ASC")
     fun getAll(): Flow<List<FoodTable>>
 
@@ -22,6 +25,6 @@ interface FoodTableDao {
     @Delete
     suspend fun delete(table: FoodTable)
 
-    @Query("DELETE FROM food_table WHERE id = :tableId")
-    suspend fun deleteById(tableId: Long)
+    @Query("DELETE FROM food_table WHERE id = :id")
+    suspend fun deleteById(id: Long)
 }

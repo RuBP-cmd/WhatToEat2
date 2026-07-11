@@ -42,13 +42,13 @@ fun EatScreen(
     onReturnToHome: () -> Unit
 ) {
     val tables by foodViewModel.tables.collectAsState()
-    val currentTableId by foodViewModel.currentTableId.collectAsState()
+    val currentTable by foodViewModel.currentTable.collectAsState()
     var foodName by remember { mutableStateOf("点击查询今天吃什么") }
 
     EatContent(
         foodName = foodName,
         tables = tables,
-        currentTableId = currentTableId,
+        currentTable = currentTable,
         onNavigateToFoodEdit = onNavigateToFoodEdit,
         onReturnToHome = onReturnToHome,
         onTableSelected = { tableId ->
@@ -66,7 +66,7 @@ fun EatScreen(
 private fun EatContent(
     foodName: String,
     tables: List<FoodTable>,
-    currentTableId: Long,
+    currentTable: FoodTable?,
     onNavigateToFoodEdit: () -> Unit,
     onReturnToHome: () -> Unit,
     onTableSelected: (Long) -> Unit,
@@ -164,7 +164,7 @@ private fun EatContent(
             // 书签侧栏（右侧）
             BookmarkSidebar(
                 tables = tables,
-                currentTableId = currentTableId,
+                currentTable = currentTable,
                 onTableSelected = onTableSelected,
                 modifier = Modifier.align(Alignment.CenterEnd)
             )
@@ -198,7 +198,7 @@ private fun EatContentPreview() {
             FoodTable(2L, "午餐", 1),
             FoodTable(3L, "晚餐", 2)
         ),
-        currentTableId = 1L,
+        currentTable = FoodTable(1L, "默认", 0),
         onNavigateToFoodEdit = {},
         onReturnToHome = {},
         onTableSelected = {},

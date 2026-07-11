@@ -52,6 +52,7 @@ import com.rubp.whattoeat.ui.components.AppTopBar
 import com.rubp.whattoeat.ui.components.CardText
 import com.rubp.whattoeat.ui.components.CircleIconButton
 import com.rubp.whattoeat.ui.components.ConfirmDialog
+import com.rubp.whattoeat.ui.components.EditDialog
 import com.rubp.whattoeat.ui.components.LeftSwipeBox
 import com.rubp.whattoeat.ui.components.MenuButton
 import com.rubp.whattoeat.ui.components.PrimaryButton
@@ -67,14 +68,14 @@ fun FoodEditScreen(
     foodViewModel: FoodViewModel,
     onReturnToEat: () -> Unit
 ) {
-    val foodList by foodViewModel.foods.collectAsState(initial = emptyList())
+    val foods by foodViewModel.foods.collectAsState(initial = emptyList())
     val tables by foodViewModel.tables.collectAsState()
-    val currentTableId by foodViewModel.currentTableId.collectAsState()
+    val currentTable by foodViewModel.currentTable.collectAsState()
 
     FoodEditContent(
-        foodList = foodList,
+        foods = foods,
         tables = tables,
-        currentTableId = currentTableId,
+        currentTable = currentTable,
         onReturnToEat = onReturnToEat,
         onTableSelected = { foodViewModel.switchTable(it) },
         onRenameTable = { tableId, name -> foodViewModel.renameTable(tableId, name) },
@@ -90,9 +91,9 @@ fun FoodEditScreen(
 
 @Composable
 fun FoodEditContent(
-    foodList: List<Food>,
+    foods: List<Food>,
     tables: List<FoodTable>,
-    currentTableId: Long,
+    currentTable: FoodTable?,
     onReturnToEat: () -> Unit,
     onTableSelected: (Long) -> Unit,
     onRenameTable: (Long, String) -> Unit,
@@ -105,17 +106,18 @@ fun FoodEditContent(
     onInputWeight: (food: Food, weight: Int) -> Unit
 ) {
     var showCreateDialog by remember { mutableStateOf(false) }
+    var showRenameTableDialog by remember {  mutableStateOf(false) }
     var showDeleteTableDialog by remember { mutableStateOf(false) }
     var showDeleteFoodDialog by remember { mutableStateOf(false) }
     var newTableName by remember { mutableStateOf("") }
-    val tableName = tables.find{ table -> table.id == currentTableId }?.name ?: ""
+    val tableName = currentTable?.name ?: ""
     var foodPendingDelete by remember { mutableStateOf<Food?>(null) }
 
     Scaffold(
         topBar = {
             AppTopBar(onReturnToEat, "编辑清单"){
-                MenuButton("重命名表格"){}
-                MenuButton("删除表格"){}
+                MenuButton("重命名表格"){ showRenameTableDialog = true }
+                MenuButton("删除表格"){ showDeleteTableDialog = true }
                 MenuButton("导入表格"){}
                 MenuButton("导出表格"){}
             }
@@ -149,7 +151,7 @@ fun FoodEditContent(
                     modifier = Modifier
                         .padding(horizontal = 30.dp)
                         .fillMaxWidth(),
-                    currentTableId = currentTableId,
+                    selectedTableId = currentTable?.id ?: -1L,
                     tables = tables,
                     onTableSelected = onTableSelected,
                     onAddTable = { showCreateDialog = true } // 拉出创建对话框
@@ -160,7 +162,7 @@ fun FoodEditContent(
                     modifier = Modifier
                         .weight(1f)
                         .padding(horizontal = 30.dp),
-                    foodList = foodList,
+                    foods = foods,
                     onClickStar = onClickStar,
                     onInputName = onInputName,
                     onInputWeight = onInputWeight,
@@ -190,7 +192,7 @@ fun FoodEditContent(
         }
     }
 
-    // 弹出对话框
+    // 弹出创建新表格对话框
     if (showCreateDialog) {
         AlertDialog(
             onDismissRequest = {
@@ -225,12 +227,28 @@ fun FoodEditContent(
         )
     }
 
+    // 弹出修改表格对话框
+    if(showRenameTableDialog) {
+        EditDialog(
+            title = "修改表格名称",
+            initialText = tableName,
+            labelText = "新的表格名称",
+            onConfirm = { newName ->
+                currentTable?.let { onRenameTable(currentTable.id, newName) }
+                showRenameTableDialog = false
+            },
+            onDismiss = {
+                showRenameTableDialog = false
+            }
+        )
+    }
+
     if(showDeleteTableDialog) {
         ConfirmDialog(
             title = "删除表格",
             message = "确认删除？",
             onConfirm = {
-                onDeleteTable(currentTableId)
+                currentTable?.id?.let { onDeleteTable(it) }
                 showDeleteTableDialog = false
             },
             onDismiss = {
@@ -259,13 +277,13 @@ fun FoodEditContent(
 @Composable
 private fun ScrollableTableTitleRow(
     modifier: Modifier,
-    currentTableId: Long, // 更新的根源
+    selectedTableId: Long,
     tables: List<FoodTable>,
     onTableSelected: (Long) -> Unit,
     onAddTable: () -> Unit,
 ){
-    val selectedIndex = remember(currentTableId, tables) {
-        tables.indexOfFirst{ it.id == currentTableId }
+    val selectedIndex = remember(selectedTableId, tables) {
+        tables.indexOfFirst{ it.id == selectedTableId }
     }
     PrimaryScrollableTabRow(
         modifier = modifier,
@@ -306,7 +324,7 @@ private fun ScrollableTableTitleRow(
 @Composable
 private fun EditTable(
     modifier: Modifier,
-    foodList: List<Food>,
+    foods: List<Food>,
     onClickStar: (food: Food) -> Unit,
     onInputName: (food: Food, name: String) -> Unit,
     onInputWeight: (food: Food, weight: Int) -> Unit,
@@ -337,7 +355,7 @@ private fun EditTable(
             )
         }
 
-        items(foodList, key = { it.id }) { food ->
+        items(foods, key = { it.id }) { food ->
             SwipeRow(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -481,12 +499,12 @@ private fun SwipeRow(
 @Composable
 private fun FoodEditContentPreview() {
     FoodEditContent(
-        foodList = emptyList(),
+        foods = emptyList(),
         tables = listOf(
             FoodTable(1L, "早餐", 0L),
             FoodTable(2L, "午餐", 1L)
         ),
-        currentTableId = 1L,
+        currentTable = FoodTable(1L, "早餐", 0L),
         onReturnToEat = {},
         onTableSelected = {},
         onRenameTable = { _, _ -> },
