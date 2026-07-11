@@ -31,7 +31,7 @@ import com.composables.icons.materialicons.filled.More_vert
 fun AppTopBar(
     onClickReturn: (() -> Unit),
     title: String? = null,
-    menu: (@Composable ColumnScope.() -> Unit)? = null
+    menu: (@Composable ColumnScope.(closeMenu: () -> Unit) -> Unit)? = null
 ){
     val componentColor = MaterialTheme.colorScheme.onPrimary
     Row(
@@ -76,7 +76,7 @@ fun AppTopBar(
                     expanded = isShowMenu,
                     onDismissRequest = { isShowMenu = false }, // 点击菜单外的任何地方，消耗点击事件
                     content = {
-                        Column{ menu() }
+                        menu( { isShowMenu = false } )
                     }
                 )
             }

@@ -107,7 +107,7 @@ fun FoodEditContent(
     onInputWeight: (food: Food, weight: Int) -> Unit
 ) {
     var showCreateTableDialog by remember { mutableStateOf(false) }
-    var showRenameTableDialog by remember {  mutableStateOf(false) }
+    var showRenameTableDialog by remember { mutableStateOf(false) }
     var showDeleteTableDialog by remember { mutableStateOf(false) }
     var showDeleteFoodDialog by remember { mutableStateOf(false) }
     var newTableName by remember { mutableStateOf("") }
@@ -116,12 +116,12 @@ fun FoodEditContent(
 
     Scaffold(
         topBar = {
-            AppTopBar(onReturnToEat, "编辑清单"){
-                MenuButton("新建表格"){ showCreateTableDialog = true }
-                MenuButton("重命名表格"){ showRenameTableDialog = true }
-                MenuButton("删除表格"){ showDeleteTableDialog = true }
-                MenuButton("导入表格"){}
-                MenuButton("导出表格"){}
+            AppTopBar(onReturnToEat, "编辑清单"){ closeMenu ->
+                MenuButton("新建表格"){ closeMenu(); showCreateTableDialog = true }
+                MenuButton("重命名表格"){ closeMenu(); showRenameTableDialog = true }
+                MenuButton("删除表格"){ closeMenu(); showDeleteTableDialog = true }
+                MenuButton("导入表格"){ closeMenu(); }
+                MenuButton("导出表格"){ closeMenu(); }
             }
         }
     ) { paddingValues ->
@@ -208,7 +208,7 @@ fun FoodEditContent(
             }
         )
     }
-    
+
     // 弹出修改表格对话框
     if(showRenameTableDialog) {
         EditDialog(
