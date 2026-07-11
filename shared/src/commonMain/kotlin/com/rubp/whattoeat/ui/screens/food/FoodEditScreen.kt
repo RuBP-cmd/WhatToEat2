@@ -106,7 +106,7 @@ fun FoodEditContent(
     onInputName: (food: Food, name: String) -> Unit,
     onInputWeight: (food: Food, weight: Int) -> Unit
 ) {
-    var showCreateDialog by remember { mutableStateOf(false) }
+    var showCreateTableDialog by remember { mutableStateOf(false) }
     var showRenameTableDialog by remember {  mutableStateOf(false) }
     var showDeleteTableDialog by remember { mutableStateOf(false) }
     var showDeleteFoodDialog by remember { mutableStateOf(false) }
@@ -117,6 +117,7 @@ fun FoodEditContent(
     Scaffold(
         topBar = {
             AppTopBar(onReturnToEat, "编辑清单"){
+                MenuButton("新建表格"){ showCreateTableDialog = true }
                 MenuButton("重命名表格"){ showRenameTableDialog = true }
                 MenuButton("删除表格"){ showDeleteTableDialog = true }
                 MenuButton("导入表格"){}
@@ -155,7 +156,7 @@ fun FoodEditContent(
                     selectedTableId = currentTable?.id ?: -1L,
                     tables = tables,
                     onTableSelected = onTableSelected,
-                    onAddTable = { showCreateDialog = true } // 拉出创建对话框
+                    onAddTable = { showCreateTableDialog = true } // 拉出创建对话框
                 )
                 
                 // 编辑表
@@ -194,40 +195,20 @@ fun FoodEditContent(
     }
 
     // 弹出创建新表格对话框
-    if (showCreateDialog) {
-        AlertDialog(
-            onDismissRequest = {
-                showCreateDialog = false
-                newTableName = ""
+    if (showCreateTableDialog) {
+        EditDialog(
+            title = "新建表格",
+            labelText = "表格名称",
+            onConfirm = { name ->
+                onCreateTable(name)
+                showCreateTableDialog = false
             },
-            title = { Text("新建表格") },
-            text = {
-                OutlinedTextField(
-                    value = newTableName,
-                    onValueChange = { newTableName = it },
-                    label = { Text("表格名称") },
-                    singleLine = true
-                )
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        onCreateTable(newTableName.trim())
-                        newTableName = ""
-                        showCreateDialog = false
-                    },
-                    enabled = newTableName.isNotBlank()
-                ) { Text("创建") }
-            },
-            dismissButton = {
-                TextButton(onClick = {
-                    showCreateDialog = false
-                    newTableName = ""
-                }) { Text(text = "取消", color = MaterialTheme.colorScheme.onSurface) }
+            onDismiss = {
+                showCreateTableDialog = false
             }
         )
     }
-
+    
     // 弹出修改表格对话框
     if(showRenameTableDialog) {
         EditDialog(
@@ -257,6 +238,7 @@ fun FoodEditContent(
             }
         )
     }
+
     if(showDeleteFoodDialog) {
         ConfirmDialog(
             title = "删除菜品",

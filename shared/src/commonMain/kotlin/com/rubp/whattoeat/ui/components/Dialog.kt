@@ -43,8 +43,8 @@ fun ConfirmDialog(
 @Composable
 fun EditDialog(
     title: String,
-    initialText: String,
     modifier: Modifier = Modifier,
+    initialText: String = "",
     labelText: String? = null,
     confirmText: String = "保存",
     dismissText: String = "取消",

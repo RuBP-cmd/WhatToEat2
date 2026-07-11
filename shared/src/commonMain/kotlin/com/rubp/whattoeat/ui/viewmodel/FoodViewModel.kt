@@ -62,10 +62,12 @@ class FoodViewModel(
 
     fun createTable(name: String) {
         viewModelScope.launch {
-            val newTableId = foodTableRepository.insert(FoodTable(name = name))
+            val wasEmpty = tables.value.isEmpty()
+            val newId = foodTableRepository.insert(FoodTable(name = name))
+            if(wasEmpty) switchTable(newId) // 没有表格的时候，应该切换到这个新建的表格
             repeat(3) {
                 foodRepository.insert(
-                    Food(name = "", weight = 1, marked = true, tableId = newTableId)
+                    Food(name = "", weight = 1, marked = true, tableId = newId)
                 )
             }
         }
