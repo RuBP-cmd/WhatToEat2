@@ -7,6 +7,7 @@ import com.rubp.whattoeat.data.local.entry.FoodTable
 import com.rubp.whattoeat.data.repository.ConfigRepository
 import com.rubp.whattoeat.data.repository.FoodRepository
 import com.rubp.whattoeat.data.repository.FoodTableRepository
+import com.rubp.whattoeat.domain.FoodTableDto
 import com.rubp.whattoeat.domain.selectFood
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
@@ -93,7 +94,6 @@ class FoodViewModel(
             }
             foodRepository.deleteByTableId(id)
             foodTableRepository.deleteById(id)
-
         }
     }
 
@@ -104,7 +104,6 @@ class FoodViewModel(
             currentTable.value?.let { table ->
                 foodRepository.insert(food.copy(tableId = table.id))
             }
-
         }
     }
 
@@ -147,5 +146,16 @@ class FoodViewModel(
     }
     private fun saveCurrentTableId(id: Long){
         configRepository.saveTableId(id)
+    }
+
+    fun inputFoodTableDto(foodTableDto: FoodTableDto){
+        viewModelScope.launch {
+            val wasEmpty = tables.value.isEmpty()
+            val tableId = foodTableRepository.insert(FoodTable(name = foodTableDto.name))
+            if(wasEmpty) switchTable(tableId) // 没有表格的时候，应该切换到这个新导入的表格
+            foodRepository.insertAll(foodTableDto.foodDtos.map {
+                Food(name = it.name, weight = it.weight, marked = true, tableId = tableId)
+            })
+        }
     }
 }

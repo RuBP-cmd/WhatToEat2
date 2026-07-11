@@ -22,6 +22,9 @@ interface FoodDao {
     @Insert
     suspend fun insert(food: Food)
 
+    @Insert
+    suspend fun insertAll(foods: List<Food>)
+
     @Delete
     suspend fun delete(food: Food)
 

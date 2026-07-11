@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -24,20 +23,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,6 +50,9 @@ import com.composables.icons.materialicons.filled.Add
 import com.composables.icons.materialicons.filled.Delete
 import com.rubp.whattoeat.data.local.entry.Food
 import com.rubp.whattoeat.data.local.entry.FoodTable
+import com.rubp.whattoeat.domain.FoodTableDto
+import com.rubp.whattoeat.domain.foodTableToJson
+import com.rubp.whattoeat.domain.jsonToFoodTableDto
 import com.rubp.whattoeat.model.Cell
 import com.rubp.whattoeat.ui.components.AppTopBar
 import com.rubp.whattoeat.ui.components.CardText
@@ -58,6 +64,8 @@ import com.rubp.whattoeat.ui.components.MenuButton
 import com.rubp.whattoeat.ui.components.PrimaryButton
 import com.rubp.whattoeat.ui.components.RowItem
 import com.rubp.whattoeat.ui.viewmodel.FoodViewModel
+import kotlinx.coroutines.launch
+import kotlinx.serialization.SerializationException
 import org.jetbrains.compose.resources.painterResource
 import whattoeat.shared.generated.resources.Res
 import whattoeat.shared.generated.resources.filled_star
@@ -82,6 +90,7 @@ fun FoodEditScreen(
         onRenameTable = { tableId, name -> foodViewModel.renameTable(tableId, name) },
         onDeleteTable = { tableId -> foodViewModel.deleteTable(tableId) },
         onCreateTable = { name -> foodViewModel.createTable(name) },
+        onImportFoodAndTable = { foodViewModel.inputFoodTableDto(it) },
         onAddFood = { foodViewModel.insert(Food(name = "", weight = 1, marked = true)) },
         onDelFood = { food -> foodViewModel.delete(food) },
         onClickStar = { food -> foodViewModel.update(food.copy(marked = !food.marked)) },
@@ -100,6 +109,7 @@ fun FoodEditContent(
     onRenameTable: (Long, String) -> Unit,
     onDeleteTable: (Long) -> Unit,
     onCreateTable: (String) -> Unit,
+    onImportFoodAndTable: (FoodTableDto) -> Unit,
     onAddFood: () -> Unit,
     onDelFood: (food: Food) -> Unit,
     onClickStar: (food: Food) -> Unit,
@@ -114,16 +124,48 @@ fun FoodEditContent(
     val tableName = currentTable?.name ?: ""
     var foodPendingDelete by remember { mutableStateOf<Food?>(null) }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope() // 获取与当前UI组件生命周期绑定的协程作用域
+    val clipboardManager = LocalClipboardManager.current
+
     Scaffold(
         topBar = {
             AppTopBar(onReturnToEat, "编辑清单"){ closeMenu ->
                 MenuButton("新建表格"){ closeMenu(); showCreateTableDialog = true }
                 MenuButton("重命名表格"){ closeMenu(); showRenameTableDialog = true }
                 MenuButton("删除表格"){ closeMenu(); showDeleteTableDialog = true }
-                MenuButton("导入表格"){ closeMenu(); }
-                MenuButton("导出表格"){ closeMenu(); }
+                MenuButton("导入表格"){
+                    closeMenu()
+                    scope.launch {
+                        try {
+                            val input = clipboardManager.getText()?.text
+                            if(input == null){
+                                snackbarHostState.showSnackbar("未获取到表格数据")
+                                return@launch
+                            }
+                            val foodTableDto = jsonToFoodTableDto(input)
+                            onImportFoodAndTable(foodTableDto)
+                            snackbarHostState.showSnackbar("已导入表格")
+                        } catch(e: SerializationException){
+                            snackbarHostState.showSnackbar("json格式错误")
+                        }
+                    }
+                }
+                MenuButton("导出表格"){
+                    closeMenu()
+                    scope.launch {
+                        if(currentTable == null){
+                            snackbarHostState.showSnackbar("当前没有选中表格")
+                        } else {
+                            clipboardManager.setText(AnnotatedString(foodTableToJson(currentTable, foods)))
+                            snackbarHostState.showSnackbar("已导出json至剪贴板")
+                        }
+                    }
+
+                }
             }
-        }
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -255,6 +297,7 @@ fun FoodEditContent(
         )
     }
 }
+
 
 
 @Composable
@@ -493,6 +536,7 @@ private fun FoodEditContentPreview() {
         onRenameTable = { _, _ -> },
         onDeleteTable = {},
         onCreateTable = {},
+        onImportFoodAndTable = { _ -> },
         onAddFood = {},
         onDelFood = {},
         onClickStar = { },

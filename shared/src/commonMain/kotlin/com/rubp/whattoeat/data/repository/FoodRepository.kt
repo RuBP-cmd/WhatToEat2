@@ -16,6 +16,8 @@ class FoodRepository(
 
     suspend fun insert(food: Food) = dao.insert(food)
 
+    suspend fun insertAll(foods: List<Food>) = dao.insertAll(foods)
+
     suspend fun delete(food: Food) = dao.delete(food)
 
     suspend fun deleteByTableId(tableId: Long) = dao.deleteByTableId(tableId)
