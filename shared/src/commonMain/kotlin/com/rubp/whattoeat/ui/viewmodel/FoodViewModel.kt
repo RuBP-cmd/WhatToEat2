@@ -38,7 +38,7 @@ class FoodViewModel(
     // 当前表格中的食物，切换表格时自动更新
     val foods: StateFlow<List<Food>> = currentTable.flatMapLatest { table ->
         if(table != null) foodRepository.getByTableId(table.id)
-        else flowOf(emptyList<Food>())
+        else flowOf(emptyList())
     }.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
     var chosenFood: Food? = null
@@ -96,7 +96,7 @@ class FoodViewModel(
     }
 
     // --- 食物 CRUD ---
-
+    // 添加新菜品用，没有选择表格的时候不会添加
     fun insert(food: Food) {
         viewModelScope.launch { // ui层不管之table_id，因此移到这里添加
             currentTable.value?.let { table ->

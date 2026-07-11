@@ -62,6 +62,7 @@ import org.jetbrains.compose.resources.painterResource
 import whattoeat.shared.generated.resources.Res
 import whattoeat.shared.generated.resources.filled_star
 import whattoeat.shared.generated.resources.outlined_star
+import kotlin.math.max
 
 @Composable
 fun FoodEditScreen(
@@ -283,7 +284,7 @@ private fun ScrollableTableTitleRow(
     onAddTable: () -> Unit,
 ){
     val selectedIndex = remember(selectedTableId, tables) {
-        tables.indexOfFirst{ it.id == selectedTableId }
+        max(0, tables.indexOfFirst{ it.id == selectedTableId }) // 空的时候只能选择Tab“添加表格”了
     }
     PrimaryScrollableTabRow(
         modifier = modifier,
