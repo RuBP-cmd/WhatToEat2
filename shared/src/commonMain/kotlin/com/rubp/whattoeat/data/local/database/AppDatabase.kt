@@ -29,7 +29,7 @@ abstract class AppDatabase : RoomDatabase() {
                 "数据库未成功初始化"
             )
 
-        fun init(builder: RoomDatabase.Builder<AppDatabase>) {
+        fun init(builder: Builder<AppDatabase>) {
             if (_database == null) {
                 _database = getDatabase(builder)
             }

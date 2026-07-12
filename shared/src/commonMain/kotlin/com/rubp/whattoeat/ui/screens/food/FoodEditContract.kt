@@ -23,4 +23,5 @@ sealed class EditDialogState {
     data object RenameTable : EditDialogState()
     data object DeleteTable : EditDialogState()
     data class DeleteFood(val food: Food) : EditDialogState()
+    data object Help: EditDialogState()
 }

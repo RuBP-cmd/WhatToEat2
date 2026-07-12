@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import com.composables.icons.materialicons.filled.Arrow_forward
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -102,15 +103,16 @@ fun MenuButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-    TextButton(
+    DropdownMenuItem(
+        modifier = modifier,
+        text = {
+            Text(
+                text = text,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        },
         onClick = onClick,
-        modifier = modifier.fillMaxWidth()
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyLarge
-        )
-    }
+    )
 }
 
 @Composable

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -25,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.rubp.whattoeat.data.local.entry.Food
 import com.rubp.whattoeat.data.local.entry.FoodTable
@@ -91,8 +93,11 @@ fun FoodEditContent(
         topBar = {
             AppTopBar(actions::onReturnToEat, "编辑清单"){ closeMenu ->
                 MenuButton("新建表格"){ closeMenu(); editDialogState = EditDialogState.CreateTable }
+                HorizontalDivider(thickness = Dp.Hairline)
                 MenuButton("重命名表格"){ closeMenu(); editDialogState = EditDialogState.RenameTable }
+                HorizontalDivider(thickness = Dp.Hairline)
                 MenuButton("删除表格"){ closeMenu(); editDialogState = EditDialogState.DeleteTable }
+                HorizontalDivider(thickness = Dp.Hairline)
                 MenuButton("导入表格"){
                     closeMenu()
                     scope.launch {
@@ -111,6 +116,7 @@ fun FoodEditContent(
                         }
                     }
                 }
+                HorizontalDivider(thickness = Dp.Hairline)
                 MenuButton("导出表格"){
                     closeMenu()
                     scope.launch {
@@ -121,8 +127,9 @@ fun FoodEditContent(
                             snackbarHostState.showSnackbar("已导出json至剪贴板")
                         }
                     }
-
                 }
+                HorizontalDivider(thickness = Dp.Hairline)
+                MenuButton("帮助"){ closeMenu(); editDialogState = EditDialogState.Help }
             }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
