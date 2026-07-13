@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.rubp.whattoeat.model.practicalWebsites
+
 import com.rubp.whattoeat.ui.components.AppTopBar
 import com.rubp.whattoeat.ui.components.CardButton
 import androidx.compose.foundation.lazy.items
