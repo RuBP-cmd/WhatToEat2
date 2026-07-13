@@ -1,4 +1,4 @@
-package com.rubp.whattoeat.model
+package com.rubp.whattoeat.ui.components
 
 import androidx.compose.runtime.Composable
 
