@@ -18,22 +18,6 @@
 | 实用网站 | 校内常用网站快捷入口（如测速、教务等） |
 | 设置 | 主题切换等个性化配置 |
 
-## 技术栈
-
-| 类别 | 技术 |
-|------|------|
-| 语言 | Kotlin |
-| UI 框架 | Compose Multiplatform (Material 3) |
-| 跨平台 | Kotlin Multiplatform (KMP) |
-| 架构 | MVVM + Repository |
-| 状态管理 | StateFlow |
-| 数据库 | Room 2.8.4 (KMP) |
-| 轻量存储 | Multiplatform Settings |
-| 图片加载 | Coil3 (Compose Multiplatform) |
-| 导航 | Navigation Compose (类型安全路由) |
-| 网络 | Ktor |
-| 序列化 | Kotlinx Serialization |
-
 ## 项目结构
 
 ```
@@ -81,29 +65,3 @@ WhatToEat2/
 # 然后在 Xcode 中打开 iosApp 运行
 ```
 
-## 架构
-
-```
-┌─────────────────────────────────────┐
-│  UI Layer (Compose Screens)         │
-│  ┌──────────┐ ┌──────────┐          │
-│  │ EatScreen│ │HomeScreen│  ...     │
-│  └────┬─────┘ └────┬─────┘          │
-├───────┼────────────┼────────────────┤
-│  ViewModel Layer                    │
-│  ┌────┴────────────┴─────┐          │
-│  │  StateFlow<UiState>   │          │
-│  └───────────┬───────────┘          │
-├──────────────┼──────────────────────┤
-│  Repository Layer                   │
-│  ┌───────────┴───────────┐          │
-│  │ ConfigRepo / FoodRepo │          │
-│  └───────┬────────┬──────┘          │
-├──────────┼────────┼─────────────────┤
-│  Data Layer                         │
-│  ┌───────┴───┐ ┌──┴───────────┐     │
-│  │  Room DB  │ │ Multiplatform│     │
-│  │           │ │ Settings     │     │
-│  └───────────┘ └──────────────┘     │
-└─────────────────────────────────────┘
-```
