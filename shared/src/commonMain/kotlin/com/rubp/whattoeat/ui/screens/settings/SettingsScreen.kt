@@ -136,7 +136,7 @@ private fun AppInfo(
                     )
                 }
             ){
-                uriHandler.openUri("https://github.com/RuBP-cmd/WhatToEat2")
+                uriHandler.openUri("https://github.com/RuBP-cmd/whattoeat-app")
             }
 
         }
